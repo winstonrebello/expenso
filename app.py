@@ -12,20 +12,20 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 # calling py
 from find import login_required, apology,usd,convertSQLToDict
-
+# Call helpers
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
-# Configure application
+
 app = Flask(__name__)
 
-# app key
+
 app.secret_key = "someRandomStringOfText"
 # otherwise pages will not open
 
 # Enable CSRF protection globally for this app
 csrf = CSRFProtect(app)
 
-# Create engine object to manage connections to DB
+# Connection to DB
 engine = create_engine("postgres://postgres:Winston()@localhost:5432/postgres")
 db = scoped_session(sessionmaker(bind=engine)) 
 # for thread safety, scoped session to separate user interactions with DB
@@ -42,7 +42,7 @@ class RegisterForm(FlaskForm):
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """Register user"""
+
     form = RegisterForm()
     # User reached route via POST
     if request.method == "POST":
@@ -137,6 +137,13 @@ def login():
 @login_required
 def dashbaord():
     return render_template('index.html')
+
+@app.route("/expenses", methods=["GET"])
+@login_required
+def expenses():
+    """Manage expenses"""
+
+    return render_template("expenses.html")
 
 # main driver function
 if __name__ == '__main__':

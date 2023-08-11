@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Manage Expenses
+{% endblock %}
+
+{% block classscripts %}
+            <li><a href="/"><i class='bx bxs-dashboard'></i>Dashboard</a></li>
+            <li class ="active"><a href="/expenses"><i class='bx bx-wallet'></i>Expense</a></li>
+            <li><a href="#"><i class='bx bx-layer'></i>Budget</a></li>
+            <li><a href="#"><i class='bx bx-message-square-dots'></i>Spend Category</a></li>
+            <li><a href="#"><i class='bx bx-bar-chart-alt-2'></i>Reports</a></li>
+            <li><a href="#"><i class='bx bx-bell'></i>Notifications</a></li>
+            <li><a href="#"><i class='bx bx-user-pin'></i>About us</a></li>
+{% endblock %}
+
+{% block main %}
+    <div class="header">
+        <div class="left">
+            <h1>Manage Expenses</h1>
+        </div>
+    </div>        
+    <br>
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Add Expenses</h5>
+            <p>Tracking your individual expenses helps you refine your spending habits and save money.</p>
+            <a href="/addexpenses" class="btn btn-success">Add Expenses</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">View or Update Expense History</h5>
+            <p>View your expense history and make changes if needed.</p>
+            <a href="/expensehistory" class="btn btn-success">View or Update Expenses</a>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

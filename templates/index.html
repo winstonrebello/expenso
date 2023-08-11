@@ -1,67 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <title>Expense Tracker</title>
-</head>
-
-<body>
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <a href="#" class="logo">
-            <i class='bx bx-coin-stack'></i>
-            <div class="logo-name"><span>Expen</span>SO</div>
-        </a>
-        <ul class="side-menu">
-            <li class="active"><a href="#"><i class='bx bxs-dashboard'></i>Dashboard</a></li>
-            <li><a href="#"><i class='bx bx-wallet'></i>Expense</a></li>
+{% block title %}
+Home
+{% endblock %}
+{% block classscripts %}
+<li class ="active"><a href="/"><i class='bx bxs-dashboard'></i>Dashboard</a></li>
+            <li><a href="/expenses"><i class='bx bx-wallet'></i>Expense</a></li>
             <li ><a href="#"><i class='bx bx-layer'></i>Budget</a></li>
             <li><a href="#"><i class='bx bx-message-square-dots'></i>Spend Category</a></li>
             <li><a href="#"><i class='bx bx-bar-chart-alt-2'></i>Reports</a></li>
             <li><a href="#"><i class='bx bx-bell'></i>Notifications</a></li>
             <li><a href="#"><i class='bx bx-user-pin'></i>About us</a></li>
-        </ul>
-        <ul class="side-menu">
-            <li>
-                <a href="/login" class="logout">
-                    <i class='bx bx-log-out-circle'></i>
-                    Logout
-                </a>
-            </li>
-        </ul>
-    </div>
-    <!-- End of Sidebar -->
+{% endblock %}
 
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Navbar -->
-        <nav>
-            <i class='bx bx-menu'></i>
-            <form action="#">
-                <div class="form-input">
-                    <input type="search" placeholder="Search...">
-                    <button class="search-btn" type="submit"><i class='bx bx-search'></i></button>
-                </div>
-            </form>
-            <input type="checkbox" id="theme-toggle" hidden>
-            <label for="theme-toggle" class="theme-toggle"></label>
-            <a href="#" class="notif">
-                <i class='bx bx-bell'></i>
-                <span class="count">2</span>
-            </a>
-            <a href="#" class="profile">
-                <img src="images/logo.png">
-            </a>
-        </nav>
-
-        <!-- End of Navbar -->
-
-        <main>
+{% block main %}
+        
             <div class="header">
                 <div class="left">
                     <h1>Dashboard</h1>
@@ -198,12 +151,4 @@
                 <!-- End of Reminders-->
 
             </div>
-
-        </main>
-
-    </div>
-
-    <script src="/static/js/index.js"></script>
-</body>
-
-</html>
+        {% endblock %}
