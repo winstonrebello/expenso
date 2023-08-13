@@ -3,7 +3,15 @@
 {% block title %}
 Manage Budgets
 {% endblock %}
-
+{% block classscripts %}
+            <li ><a href="/"><i class='bx bxs-dashboard'></i>Dashboard</a></li>
+            <li><a href="/expenses"><i class='bx bx-wallet'></i>Expense</a></li>
+            <li class ="active"><a href="/budgets"><i class='bx bx-layer'></i>Budget</a></li>
+            <li><a href="/categories"><i class='bx bx-message-square-dots'></i>Spend Category</a></li>
+            <li><a href="/reports"><i class='bx bx-bar-chart-alt-2'></i>Reports</a></li>
+            <li><a href="#"><i class='bx bx-bell'></i>Notifications</a></li>
+            <li><a href="#"><i class='bx bx-user-pin'></i>About us</a></li>
+{% endblock %}
 {% block main %}
 <h1>Manage Budgets</h1>
 <br>

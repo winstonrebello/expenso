@@ -14,14 +14,14 @@ function loadData(categoryData, dateData, payersData) {
 // Add row to table
 function addRow() {
     // Build the HTML string for a new row
-    let newRow = "<tr> <td onclick='selectRow(this);'><br></td><td><textarea class='form-control-sm' name='description.' form='expenseForm' required maxlength='200'></textarea></td><td><select class='form-control-sm' name='category.' form='expenseForm' required'>"
+    let newRow = "<tr> <td onclick='selectRow(this);'><br></td><td><textarea class='form-control-sm exptable' name='description.' form='expenseForm' required maxlength='200'></textarea></td><td><select class='form-control-sm exptable' name='category.' form='expenseForm' required'>"
 
     // Loop through the categories
     for (i = 0; i < categories.length; i++) {
         newRow += "<option value='" + categories[i].name + "'>" + categories[i].name + "</option>"
     }
 
-    newRow += "</select></td><td><input type='date' class='form-control-sm' name='date.' form='expenseForm' required value='" + today + "'></td><td><select class='form-control-sm' name='payer.' form='expenseForm' required><option value='Self'>Self</option>"
+    newRow += "</select></td><td><input type='date' class='form-control-sm exptable' name='date.' form='expenseForm' required value='" + today + "'></td><td><select class='form-control-sm exptable' name='payer.' form='expenseForm' required><option value='Self'>Self</option>"
 
     // Loop through the payers
     for (i = 0; i < payers.length; i++) {
@@ -29,7 +29,7 @@ function addRow() {
     }
 
     // Complete the HTML string for the new row
-    newRow += "</select></td><td><input type='text' class='form-control-sm' name='amount.' form='expenseForm' size='10' placeholder='$' maxlength='10' required pattern='(?=.*?\\d)^(([1-9]\\d{0,2}(\\d{3})*)|\\d+)?(\\.\\d{1,2})?$' title='Format must be currency value without dollar sign or commas e.g. 1, 2.50, 1500.75'></td></tr>"
+    newRow += "</select></td><td><input type='text' class='form-control-sm exptable' name='amount.' form='expenseForm' size='10' placeholder='$' maxlength='10' required pattern='(?=.*?\\d)^(([1-9]\\d{0,2}(\\d{3})*)|\\d+)?(\\.\\d{1,2})?$' title='Format must be currency value without dollar sign or commas e.g. 1, 2.50, 1500.75'></td></tr>"
 
     // Append the table by adding a new row to it with the constructed HTML string
     $("#expenseTable tbody").append(newRow);

@@ -14,26 +14,30 @@
 {% endblock %}
 
 {% block main %}
-    <h1>Manage Expenses</h1>
-    <br>
-    <div class="row">
-      <div class="col-sm-6">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Add Expenses</h5>
+    <div class="header">
+      <div class="left">
+          <h1>Manage Expenses</h1>
+      </div>
+    </div><br>
+
+  <ul class="insights">
+    <li>
+        <span class="info">
+            <h3>
+              Add Expenses
+            </h3>
             <p>Tracking your individual expenses helps you refine your spending habits and save money.</p>
-            <a href="/addexpenses" class="btn btn-success">Add Expenses</a>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">View or Update Expense History</h5>
-            <p>View your expense history and make changes if needed.</p>
-            <a href="/expensehistory" class="btn btn-success">View or Update Expenses</a>
-          </div>
-        </div>
-      </div>
-    </div>
+            <a href="/addexpenses" class="btn btn-blue text-center">Add Expenses</a>
+        </span>
+    </li>
+    <li>
+        <span class="info">
+            <h3>
+              Update or View Expense
+            </h3>
+            <p>View your expense history or make some relevent changes if needed.</p>
+            <a href="/expensehistory" class="btn btn-blue text-center">Update Expenses</a>
+        </span>
+    </li>  
+  </ul>
 {% endblock %}

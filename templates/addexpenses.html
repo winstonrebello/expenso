@@ -18,9 +18,18 @@
 {% endblock %}
 
 {% block main %}
-    <h1>Add Expenses</h1>
-    <br>
-    <p><small>Tip: Delete a row by clicking/tapping the row number in the '#' column and then clicking/tapping the 'Delete Row' button. Must have at least 2 rows.</small></p>
+<div class="header">
+  <div class="left">
+      <h1>Add Expenses</h1>
+      <ul class="breadcrumb">
+        <li><a href="#">
+          Tip
+            </a></li>
+        :
+        <li><a href="#" class="active">Delete a row by clicking/tapping the row number in the '#' column and then clicking/tapping the 'Delete Row' button. Must have at least 2 rows.</a></li>
+    </ul>
+  </div>
+</div><br>
 
     <form action="/addexpenses" method="post" id="expenseForm" autocomplete="off">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -38,23 +47,23 @@
           </thead>
           <tbody>
             <tr>
-              <td onclick="selectRow(this);">1 <i class="far fa-hand-pointer"></i><br>
+              <td onclick="selectRow(this);">1 <i class="far fa-hand-pointer exptable"></i><br>
               </td>
               <td>
-                  <textarea class="form-control-sm" name="description.1" form="expenseForm" required maxlength="200" autofocus></textarea>
+                  <textarea class="form-control-sm exptable" name="description.1" form="expenseForm" required maxlength="200" autofocus></textarea>
               </td>
               <td>
-                  <select id="category" class="form-control-sm" name="category.1" form="expenseForm" required>
+                  <select id="category" class="form-control-sm exptable" name="category.1" form="expenseForm" required>
                     {% for category in categories %}
                       <option value="{{ category['name'] }}">{{ category['name'] }}</option>
                     {% endfor %}
                   </select>
               </td>
               <td>
-                  <input type="date" class="form-control-sm" name="date.1" form='expenseForm' required value="{{ date }}">
+                  <input type="date" class="form-control-sm exptable" name="date.1" form='expenseForm' required value="{{ date }}">
               </td>
               <td>
-                  <select class="form-control-sm" name="payer.1" form="expenseForm" required>
+                  <select class="form-control-sm exptable" name="payer.1" form="expenseForm" required>
                     <option value="Self">Self</option>
                     {% for payer in payers %}
                     <option value="{{ payer['name'] }}">{{ payer['name'] }}</option>
@@ -64,7 +73,7 @@
               <td>
                   <!-- Modified RegEx from Gary @ StackOverflow: https://stackoverflow.com/a/16242575 -->
                   <!-- TODO: change input type from 'text' to 'number' to remove the need for regex? Look at my implementation on budgets.html and use the same thing here -->
-                  <input type="text" class="form-control-sm" name="amount.1" form='expenseForm' size="10" placeholder="$" required maxlength="10" pattern="(?=.*?\d)^(([1-9]\d{0,2}(\d{3})*)|\d+)?(\.\d{1,2})?$" title="Format must be currency value without dollar sign or commas e.g. 1, 2.50, 1500.75">
+                  <input type="text" class="form-control-sm exptable" name="amount.1" form='expenseForm' size="10" placeholder="₹" required maxlength="10" pattern="(?=.*?\d)^(([1-9]\d{0,2}(\d{3})*)|\d+)?(\.\d{1,2})?$" title="Format must be currency value without dollar sign or commas e.g. 1, 2.50, 1500.75">
               </td>
             </tr>
           </tbody>

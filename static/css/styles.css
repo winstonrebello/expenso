@@ -640,6 +640,29 @@ a:visited { text-decoration: none; }
 a:hover { text-decoration: none; }
 a:active { text-decoration: none; }
 
+::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: var(--grey);
+}
+
+::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: var(--grey);
+}
+
+::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: var(--light-primary);
+}
+::-webkit-scrollbar-thumb:hover 
+{
+    background-color: var(--primary);
+}
 /*-------------------------------------------------------------------------------------*/
 
 /*Layout styling*/
@@ -720,3 +743,43 @@ main img
     padding-bottom: 0.5rem;
     padding-left: 0.2rem;
 }
+
+
+/*-------------------------------Espenses -------------------------*/
+.table-hover{
+    color : var(--dark);
+
+}
+
+#expenseTable {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  #expenseTable th {
+    border-top: 1px solid #ddd;
+    border-bottom:1px solid #ddd ;
+    padding: 8px;
+  }
+  
+  #expenseTable tr:nth-child(even){background-color: var(--light); color: var(--dark);}
+  
+  /* #expenseTable tr:hover {background-color: #ddd;} */
+  
+  #expenseTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    /* background-color: #04AA6D; */
+    color: var(--dark);
+  }
+
+  .exptable{
+    background: var(--light);
+    color: var(--dark-grey);
+  }
+  .exptable:hover{
+    background: var(--light);
+    color: var(--dark-grey);
+  }
