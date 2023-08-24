@@ -6,7 +6,7 @@
     <link href="/static/css/expenses.css" type="text/css" rel="stylesheet">
 {% endblock %}
 
-{% block scripts %}
+<!-- {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
@@ -16,7 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js "></script>
-{% endblock %}
+{% endblock %} -->
 
 {% block title %}
     Expense History
@@ -32,8 +32,13 @@
 {% endblock %}
 
 {% block main %}
-    <h1>Expense History</h1>
-    <br>
+
+<div class="header">
+  <div class="left">
+      <h1>Expense History</h1>
+  </div>
+</div><br>
+
     {% if isDeleteAlert == True %}
       <div class="alert alert-dismissible alert-danger">
         <button type="button" class="close" data-dismiss="alert">&times;</button>
