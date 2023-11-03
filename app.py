@@ -21,13 +21,13 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 from flask_wtf.csrf import CSRFProtect
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField
 from helpers import apology, login_required, usd
 
 # Configure application
 app = Flask(__name__)
 
-# Set app key
+# Set app key  pass @888Guns
 app.secret_key = "someRandomStringOfText"
 
 # Ensure templates are auto-reloaded
