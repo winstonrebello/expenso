@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-    --light: #181a1e;
-    --grey: #25252c;
-    --dark: #fbfbfb;
+    --light: #f6f6f9;
+    --grey: #eee;
+    --dark: #363949;
     --primary: #1976D2;
     --light-primary: #CFE8FF;
     --dark-grey: #AAAAAA;
@@ -39,9 +39,9 @@ html{
 }
 
 body.dark{
-    --light: #f6f6f9;
-    --grey: #eee;
-    --dark: #363949;
+    --light: #181a1e;
+    --grey: #25252c;
+    --dark: #fbfbfb;
 }
 
 body{

@@ -1,0 +1,24 @@
+DONE
+User registration and Authentication   
+Users can manually input expenses
+Allows users to set Yearly time frame budgets
+Users can view a list of expenses.
+Sort expenses by date or amount.
+Visualize expense data with charts and graphs.
+Provide insights on spending patterns.
+Generate detailed expense reports in csv or pdf file.
+
+NEED TO DO
+1. User profile management 
+2. Track expenses against budgets and provide notification
+3. Allows users to upload images to expense entries.
+4. Support for multiple currencies.
+5. Auto currency conversion for expense in different currencies.
+6. Allows users to set custom reminders.
+7. Users can save money on selected categories.
+
+1 simple
+4 & 5 similar simple
+2 & 6 similar moderate
+7 moderate
+3 hard
