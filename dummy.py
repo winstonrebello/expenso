@@ -59,3 +59,27 @@
 # thistuple = tuple(("apple","banana","cat","dog"))
 # print(type(thistuple))
 # print(thistuple[-2:-1])
+
+def format_rupee(value):
+  """Formats a value to print ₹ in Python.
+
+  Args:
+    value: The value to format.
+
+  Returns:
+    A string representing the value in ₹.
+  """
+
+  # Get the Unicode character for the ₹ symbol.
+  rupee_symbol = u'\u20B9'
+
+  # Format the value as a string.
+  formatted_value = format(value, ',d')
+
+  # Add the ₹ symbol to the formatted value.
+  return rupee_symbol + formatted_value
+
+# Example usage:
+
+print(format_rupee(1234567))
+print(f"{12345678:,}")

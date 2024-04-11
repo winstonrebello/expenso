@@ -5,6 +5,7 @@ import copy
 import calendar
 import tendie_dashboard
 import tendie_expenses
+import tendie_notifc
 import tendie_budgets
 import tendie_categories
 import tendie_reports
@@ -771,6 +772,14 @@ def payersreport(year=None):
         session["user_id"], year)
 
     return render_template("payersreport.html", payers=payersReport, year=year)
+
+# Route to fetch notification preferences for a user
+@app.route("/notifications", methods=["GET", "POST"])
+@login_required  # Assuming you have a login_required decorator for route protection
+def get_notification_preferences():
+        """View reports"""
+        user = tendie_account.getAllUserInfo(session["user_id"])
+        return render_template("notification.html",username=user["name"])
 
 
 @app.route("/account", methods=["GET", "POST"])
