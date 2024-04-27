@@ -16,5 +16,63 @@ Notifications
 
 
 {% block main %}
-<h1>Welcome, {{ username }} ❤</h1>
+<!-- <h1>Welcome, {{ username }} ❤</h1>
+<h5>{{recommend}}</h5>
+<h5>{{sortcat}}</h5>
+<h5>{{savgap}}</h5>
+<h5>{{total_expenses}}</h5>
+<h5>{{savings_target}}</h5>
+<h5>{{selected_option}}</h5>
+<form action="/" method="post">
+<div class="form-group">
+  <label for="monthyear" class="col-form-label">month:</label>
+  <select id="monthyear" class="form-control-sm" name="monthyear" form="quickmonth" required>
+    {% for monthlist in monthlist %}
+    <option value="{{ monthlist['monthyear'] }}">{{ monthlist['monthyear'] }}</option>
+    {% endfor %}
+  </select>
+</div>
+<button type="submit">Submit</button>
+    </form> -->
+    <h1>Welcome to the Notification Page</h1>
+    <span style="font-weight:bold;">Select a Month:</span>
+    <select id="monthSelect" class="custom-select" style="width:auto;" onchange="reloadPage(this.value)">
+        {% for month in monthlist %}
+            <option value="{{ month['monthyear'] }}">{{ month['monthyear'] }}</option>
+        {% endfor %}
+    </select>
+    <span style="font-weight:bold;">Select a Number:</span>
+        <select id="savingsGoal" class="custom-select" style="width:auto;" onchange="reloadPageWithSavingsGoal(this.value)">
+            <option value="2">2%</option>
+            <option value="5">5%</option>
+            <option value="10">10%</option>
+            <option value="15">15%</option>
+            <option value="20">20%</option>
+        </select>
+    <p>Total Expenses: ${{ total_expenses }}</p>
+    <p>Savings Target: ${{ savings_target }}</p>
+    <p>Savings Gap: {{ savgap }}</p>
+    <p>Month List: ${{ monthlist }}</p>
+
+    
+
+    <h2>Sorted Categories</h2>
+    <p>{{ sortcat }}</p>
+    <ul>
+        {% for category, amount in sorted_categories %}
+            <li>{{ category }}: ${{ amount }}</li>
+        {% endfor %}
+    </ul>
+    <p>recommend {{recommend}}</p>
+    <script>
+        function reloadPage(selectedMonth) {
+            window.location.href = "/notifications?month=" + encodeURIComponent(selectedMonth) + "&goal=" + encodeURIComponent(selectedGoal);
+        }
+        function reloadPageWithSavingsGoal(selectedGoal) {
+            var selectedMonth = document.getElementById("monthSelect").value;
+            window.location.href = "/notifications?month=" + encodeURIComponent(selectedMonth) + "&goal=" + encodeURIComponent(selectedGoal);
+        }
+    </script>
+
 {% endblock %}
+

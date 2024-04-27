@@ -19,6 +19,13 @@ def getUsername(userID):
 
     return name
 
+# get the users expense date
+def getUserdate(userID):
+    mandy = db.execute(
+        "select to_char(expensedate::date, 'YYYY-MM')  as monthyear from public.expenses where user_id = :usersID order by 1 desc "
+        , {"usersID": userID}).fetchone()[0]
+
+    return mandy
 
 # Get the users total income
 def getIncome(userID):
@@ -202,7 +209,7 @@ def getTotalPayers(userID):
 def getAllUserInfo(userID):
 
     # Create dict to hold user info
-    user = {"name": None, "income": None, "payers": None, "stats": None}
+    user = {"name": None, "income": None, "payers": None, "stats": None, "mandy": None}
 
     # Get the users account name
     user["name"] = getUsername(userID)
@@ -215,5 +222,8 @@ def getAllUserInfo(userID):
 
     # Get the users stats
     user["stats"] = getStatistics(userID)
+
+    # get month and year
+    user["mandy"] = getUserdate(userID)
 
     return user

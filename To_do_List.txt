@@ -7,18 +7,18 @@ Sort expenses by date or amount.
 Visualize expense data with charts and graphs.
 Provide insights on spending patterns.
 Generate detailed expense reports in csv or pdf file.
+User profile management 
 
 NEED TO DO
-1. User profile management 
-2. Track expenses against budgets and provide notification
-3. Allows users to upload images to expense entries.
-4. Support for multiple currencies.
-5. Auto currency conversion for expense in different currencies.
-6. Allows users to set custom reminders.
-7. Users can save money on selected categories.
+1. Users can save money on selected categories.
+Addition of investment advise according to savings goal
+(multiple advice button which will show text on investment , best option to multiply wealth,etc)
 
-1 simple
-4 & 5 similar simple
-2 & 6 similar moderate
-7 moderate
-3 hard
+
+CONTANS
+no. of transactions per category
+fetch investment and saved categories and display total amount as per date set by user
+seperate if condittion to notify saved and invested percent
+button1 different types of investemnt palns
+button2 displayes the importance of saving an eg of 40 years of investemnt
+

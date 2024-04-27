@@ -777,10 +777,58 @@ def payersreport(year=None):
 @app.route("/notifications", methods=["GET", "POST"])
 @login_required  # Assuming you have a login_required decorator for route protection
 def get_notification_preferences():
-        """View reports"""
-        user = tendie_account.getAllUserInfo(session["user_id"])
-        return render_template("notification.html",username=user["name"])
+        """FOR ANALYTICS"""
+        if request.method == 'GET':
+            user = tendie_account.getAllUserInfo(session["user_id"])
+            id = session["user_id"]
+            #monthyear = tendie_account.getUserdate(session["user_id"])
+            monthyear = request.args.get("month")
+            savings_goal_percentage = float(request.args.get('goal',2)) 
 
+            income = tendie_account.getIncome(session["user_id"])
+
+            #defined_value = [{"percent": 5}, {"percent": 10},{"percent": 15}, {"percent": 20},{"percent": 25}, {"percent": 30}] 
+
+            savings_target = ( savings_goal_percentage / 100) * income
+
+            monthlist = tendie_notifc.getSpenddateyear(session["user_id"])   
+
+            expenses = db.execute("with cte as(select user_id,category,amount, to_char(expensedate::date, 'YYYY-MM') as monthyear from public.expenses where user_id = :idd )select * from cte where monthyear = :month order by monthyear desc",
+                                {"month": monthyear,"idd": id}).fetchall()
+
+            total_expenses = sum(expense.amount for expense in expenses)
+
+            # Analyze spending patterns and identify categories where the user spends the most money
+            category_expenses = {}
+            for expense in expenses:
+                category = expense.category
+                category_expenses[category] = category_expenses.get(category, 0) + expense.amount
+
+            # Sort categories by total expenses
+            sorted_categories = sorted(category_expenses.items(), key=lambda x: x[1], reverse=True)
+
+            savings_gap = savings_target - total_expenses
+            recommendations = []
+            if total_expenses >= savings_target:
+                recommendations.append("Congratulations! You have reached your savings target.")
+            else:
+                recommendations.append(f"You need to save ${savings_target - total_expenses:.2f} more to reach your target.")
+
+            # Rule-based additional savings strategies
+            if total_expenses > (income * 0.6):
+                recommendations.append("Consider reducing discretionary spending.")
+            elif total_expenses > (income * 0.5):
+                recommendations.append("Optimize recurring expenses to save more.")
+            else:
+                recommendations.append("Keep up the good work on managing your expenses.")
+            
+            return render_template("notification.html",username=user["name"], recommend = recommendations,sortcat =sorted_categories,savgap= savings_gap,
+                                savings_target=savings_target,total_expenses=total_expenses,monthlist=monthlist,svgope=savings_goal_percentage
+                                )
+
+        elif request.method =='POST':
+            pass
+            
 
 @app.route("/account", methods=["GET", "POST"])
 @login_required
