@@ -10,8 +10,8 @@ Notifications
   <li><a href="/budgets"><i class='bx bx-layer'></i>Budget</a></li>
   <li><a href="/categories"><i class='bx bx-message-square-dots'></i>Spend Category</a></li>
   <li><a href="/reports"><i class='bx bx-bar-chart-alt-2'></i>Reports</a></li>
-  <li class="active"><a href="#"><i class='bx bx-bell'></i>Notifications</a></li>
-  <li><a href="#"><i class='bx bx-user-pin'></i>About us</a></li>
+  <li class="active"><a href="/analytics"><i class='bx bx-analyse'></i>Analytics</a></li>
+  <li><a href="/account"><i class='bx bx-user-pin'></i>About us</a></li>
 {% endblock %}
 
 
@@ -34,45 +34,243 @@ Notifications
 </div>
 <button type="submit">Submit</button>
     </form> -->
-    <h1>Welcome to the Notification Page</h1>
-    <span style="font-weight:bold;">Select a Month:</span>
-    <select id="monthSelect" class="custom-select" style="width:auto;" onchange="reloadPage(this.value)">
-        {% for month in monthlist %}
-            <option value="{{ month['monthyear'] }}">{{ month['monthyear'] }}</option>
-        {% endfor %}
-    </select>
-    <span style="font-weight:bold;">Select a Number:</span>
-        <select id="savingsGoal" class="custom-select" style="width:auto;" onchange="reloadPageWithSavingsGoal(this.value)">
-            <option value="2">2%</option>
+<h1>Saving Analytics</h1>
+<br>
+<div class="container">
+    <!-- Begin Your Expenses -->
+    <div class="row">
+        <div class="col-6">
+            <h5 style="text-align:left">Select Month and Savings '%'</h2>
+        </div>
+
+        <div class="col">
+            <select id="monthSelect" class="custom-select" style="width:auto;" onchange="reloadPage(this.value)">
+            {% for month in monthlist %}
+                <option value="{{ month['monthyear'] }}">{{ month['monthyear'] }}</option>
+            {% endfor %} 
+            </select>
+        </div>
+        <div class="col">
+            <select id="savingsGoal" class="custom-select" style="width:auto;" onchange="reloadPageWithSavingsGoal(this.value)">
+            <option value="0">0%</option>
             <option value="5">5%</option>
             <option value="10">10%</option>
             <option value="15">15%</option>
             <option value="20">20%</option>
-        </select>
-    <p>Total Expenses: ${{ total_expenses }}</p>
-    <p>Savings Target: ${{ savings_target }}</p>
-    <p>Savings Gap: {{ savgap }}</p>
-    <p>Month List: ${{ monthlist }}</p>
+            <option value="25">25%</option>
+            <option value="30">30%</option>
+            <option value="35">35%</option>
+            <option value="40">40%</option>
+            <option value="45">45%</option>
+            </select>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col">
+            <div class="card text-white bg-success mb-3" style="max-width: 20rem;">
+                <div class="card-header"><strong>Total Expenses</strong></div>
+                <div class="card-body">
+                    Rs {{ total_expenses }}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+                <div class="card-header"><strong>Savings Target</strong></div>
+                <div class="card-body">
+                    Rs {{ savings_target }}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-white bg-info mb-3" style="max-width: 20rem;">
+                <div class="card-header"><strong>Saved and Invested Amount</strong></div>
+                <div class="card-body">
+                    Rs {{ saved_amount }}.0
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-12">
+            <h4 style="text-align:left">Sorted Category</h4>
+            {% if sorted_categories != None %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Category</th>
+                            <th scope="col">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category, amount in sortcat %}
+                        <tr>
+                            <td>{{ category }}</td>
+                            <td>Rs {{ amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p style="text-align:left"><small class="text-muted">You have no expenses yet.</small></p>
+            {% endif %}
+        </div>
+    </div>
+    <!-- <p>{{first}}</p>
+    <p>{{second}}</p>
+    <p>{{third}}</p> -->
+    <br> 
+    <div class="row">
+        <div class="col-12">
+            {% if count1[0] == 1 %}
+            <div class="card text-white bg-success mb-3" >
+                <div class="card-body">
+                    {{first[0]}}
+                </div>
+            </div>
+            {% else %}
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    {{first[0]}}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            {% if count1[1] == 1 %}
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    {{first[1]}}
+                </div>
+            </div>
+            {% elif count1[1] == 2 %}
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    {{first[1]}}
+                </div>
+            </div>
+            {% else %}
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    {{first[1]}}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            {% if count1[2] == 1 %}
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    {{first[2]}}
+                </div>
+            </div>
+            {% else %}
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    {{first[2]}}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <!-- <div class="row">
+        <div class="col-3 offset-md-3">
+            <button type="button" class="btn btn-outline-primary btn-block btn-lg" style="width:auto;" data-toggle="modal"
+            data-target="#quickExpenseModal"> Investment Plans </button>
 
-    
+            <div class="modal fade bd-example-modal-lg" id="quickExpenseModal" tabindex="-1" role="dialog" aria-labelledby="quickExpenseModalLabel"
+            aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <br>
+                    <p align="left"><b>Stock Market:</b><br>
+                    Investing in stocks means buying shares of ownership in a company. Stock prices can go up or down based on the company's performance and market conditions. It's a higher-risk, higher-reward investment option.</p>
+                    <p><i>Risk factor mid to high. Time and Comapny information Needed.</i></p>
+                    <br>
+                    <h5>2. Mutual Funds: </h5>
+                    <h6>Mutual funds pool money from multiple investors to invest in a diversified portfolio of stocks, bonds, or other securities. They're managed by professional fund managers and are a good option for those who prefer a more hands-off approach to investing.</h6>
+                    <h6>Risk factor mid to high.</h6>
+                    <br>
+                    <h5>3. Exchange-Traded Funds</h5>
+                    <h6>ETFs are investment funds that trade on stock exchanges, similar to stocks. They typically hold a diversified portfolio of assets like stocks, bonds, or commodities and offer investors exposure to various markets.</h6>
+                    <h6>Risk factor low to high.</h6>
+                    <br>
+                    <h5>4. Bonds: </h5>
+                    <h6>Bonds are debt securities issued by governments or corporations to raise capital. Investors lend money in exchange for periodic interest payments and the return of the principal amount at maturity.</h6>
+                    <h6>Risk factor low to mid.</h6>
+                    <br>
+                    <h5>5. Cryptocurrencies: </h5>
+                    <h6>Cryptocurrencies are digital or virtual currencies that use cryptography for security and operate independently of central banks. Bitcoin, Ethereum, and Litecoin are examples of cryptocurrencies that investors trade on various online platforms.</h6>
+                    <h6>Risk factor mid to high.</h6>
+                    <br>
+                    <h5>6. Real Estate: </h5>
+                    <h6>Investing in real estate involves buying, owning, and managing properties for potential appreciation in value or rental income.</h6>
+                    <h6>Varies from City to City.</h6>
+                    <br>
+                    <h5>7. Fixed Deposit </h5>
+                    <h6>Fixed deposits are a type of investment offered by banks where you deposit a certain amount of money for a fixed period at a fixed interest rate. They offer guaranteed returns and are considered a safer investment option.</h6>
+                    <h6>Risk factor low, interest rates are low</h6>
+                    <br>
+                    <h5>8. Recurring Deposit </h5>
+                    <h6>Recurring deposits are similar to fixed deposits but instead of depositing a lump sum amount, you invest a fixed amount of money at regular intervals for a predetermined period. RDs also offer a fixed interest rate and are a good option for regular savings.</h6>
+                    <h6>Risk factor low, interest rates are low</h6>
+                    <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col align-self-start">
+            <button type="button" class="btn btn-outline-primary btn-block btn-lg" style="width:auto;" data-toggle="modal"
+            data-target="#quickExpenseModal2"> Saving Importance </button>
 
-    <h2>Sorted Categories</h2>
-    <p>{{ sortcat }}</p>
-    <ul>
-        {% for category, amount in sorted_categories %}
-            <li>{{ category }}: ${{ amount }}</li>
-        {% endfor %}
-    </ul>
-    <p>recommend {{recommend}}</p>
+            <div class="modal fade bd-example-modal-lg" id="quickExpenseModal2" tabindex="-1" role="dialog" aria-labelledby="quickExpenseModalLabel"
+            aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                    <h5>Saving for the long term is crucial for achieving financial security, building wealth, and achieving your long-term financial goals.</h5>
+                        <br>
+                    <h6>Compound Interest: Saving and investing early allows your money to benefit from compound interest, where your earnings generate additional earnings over time. The longer your money stays invested, the more it can grow exponentially.</h6>
+                    <h6>Wealth Accumulation: Investing regularly over a long period allows you to accumulate a significant amount of wealth. Even small contributions can grow substantially over several decades, especially when coupled with compounding returns.</h6>
+                    <h6>Retirement Planning: Saving for the long term ensures you have enough funds to support yourself during retirement when your earning potential may decrease. It helps maintain your lifestyle and covers expenses such as healthcare, travel, and leisure activities.</h6>
+                    <h6>Financial Freedom: Long-term savings and investments can provide financial freedom and flexibility, allowing you to pursue your passions, start a business, or take risks without worrying about financial constraints.</h6>
+                    <br>
+                    <h5>let's illustrate the importance of long-term saving with a realistic example</h6>
+                    <h6>Imagine a person,who starts investing Rs 5,000 per month in stocks at the age of 20. He plans to retire at 60, giving him 40 years of investment time. His initial income is Rs 20,000 per month, and he increases his investment by 5% every year to keep up with inflation and income growth.</h6>
+                    <h6>Assuming an average annual return of 8% on his stock investments, here's how his investment grows over 40 years:</h6>
+                    <h6>At the age of 60, his monthly investment of Rs 5,000 would have grown to approximately Rs 10.5 million.
+                        Even though he invested a total of rs 2.4 million over 40 years (Rs 5,000 per month for 40 years), the power of compounding turned his investments into a substantial nest egg.</h6>
+                    <h6>This example demonstrates how consistent long-term saving and investing, coupled with the power of compounding, can lead to significant wealth accumulation over time, providing financial security and freedom in the future.</h6>
+                    <br>
+                    <br>
+                    hoolaa!!
+                </div>
+            </div>
+        </div>
+    </div> -->
+
     <script>
         function reloadPage(selectedMonth) {
-            window.location.href = "/notifications?month=" + encodeURIComponent(selectedMonth) + "&goal=" + encodeURIComponent(selectedGoal);
+            window.location.href = "/analytics?month=" + encodeURIComponent(selectedMonth) + "&goal=" + encodeURIComponent(selectedGoal);
         }
         function reloadPageWithSavingsGoal(selectedGoal) {
             var selectedMonth = document.getElementById("monthSelect").value;
-            window.location.href = "/notifications?month=" + encodeURIComponent(selectedMonth) + "&goal=" + encodeURIComponent(selectedGoal);
+            window.location.href = "/analytics?month=" + encodeURIComponent(selectedMonth) + "&goal=" + encodeURIComponent(selectedGoal);
         }
     </script>
+
+    <!-- Begin Quick Expense -->
+
+
+
+
 
 {% endblock %}
 

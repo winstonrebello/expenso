@@ -1,6 +1,6 @@
 import os
 import calendar
-import tendie_budgets
+import e_budgets
 
 from flask import request, session
 from flask_session import Session
@@ -70,7 +70,7 @@ def getBudgets(userID, year=None):
     if not year:
         year = datetime.now().year
 
-    budgets_query = tendie_budgets.getBudgets(userID)
+    budgets_query = e_budgets.getBudgets(userID)
     # Build a budget dict to return
     if budgets_query and year in budgets_query:
         for record in budgets_query[year]:

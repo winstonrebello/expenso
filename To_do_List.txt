@@ -16,9 +16,8 @@ Addition of investment advise according to savings goal
 
 
 CONTANS
-no. of transactions per category
-fetch investment and saved categories and display total amount as per date set by user
-seperate if condittion to notify saved and invested percent
+fetch investment and saved categories and display total amount as per date set by user --done
+seperate if condittion to notify saved and invested percent --done
 button1 different types of investemnt palns
 button2 displayes the importance of saving an eg of 40 years of investemnt
 

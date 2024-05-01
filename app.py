@@ -3,13 +3,13 @@ import json
 import requests
 import copy
 import calendar
-import tendie_dashboard
-import tendie_expenses
-import tendie_notifc
-import tendie_budgets
-import tendie_categories
+import e_dashboard
+import e_expenses
+import e_analytics
+import e_budgets
+import e_categories
 import tendie_reports
-import tendie_account
+import e_account
 import psycopg2
 
 from flask import Flask, jsonify, redirect, render_template, request, session
@@ -192,52 +192,59 @@ def index():
         spending_month = []
 
         # Get the users spend categories (for quick expense modal)
-        categories = tendie_categories.getSpendCategories(session["user_id"])
+        categories = e_categories.getSpendCategories(session["user_id"])
 
         # Get the users payers (for quick expense modal)
-        payers = tendie_account.getPayers(session["user_id"])
+        payers = e_account.getPayers(session["user_id"])
 
         # Get todays date (for quick expense modal)
         date = datetime.today().strftime('%Y-%m-%d')
 
         # Get the users income
-        income = tendie_account.getIncome(session["user_id"])
+        income = e_account.getIncome(session["user_id"])
 
         # Get current years total expenses for the user
-        expenses_year = tendie_dashboard.getTotalSpend_Year(session["user_id"])
+        expenses_year = e_dashboard.getTotalSpend_Year(session["user_id"])
+        
+        Month_number = db.execute("SELECT to_char(current_date, 'MM')::int as month_no limit 1").fetchone()
+
+        if Month_number is not None:
+            Month_number = Month_number[0]
+        else:
+            Month_number = 1
 
         # Get current months total expenses for the user
-        expenses_month = tendie_dashboard.getTotalSpend_Month(
+        expenses_month = e_dashboard.getTotalSpend_Month(
             session["user_id"])
 
         # Get current week total expenses for the user
-        expenses_week = tendie_dashboard.getTotalSpend_Week(session["user_id"])
+        expenses_week = e_dashboard.getTotalSpend_Week(session["user_id"])
 
         # Get last 5 expenses for the user
-        expenses_last5 = tendie_dashboard.getLastFiveExpenses(
+        expenses_last5 = e_dashboard.getLastFiveExpenses(
             session["user_id"])
 
         # Get every budgets spent/remaining for the user
-        budgets = tendie_dashboard.getBudgets(session["user_id"])
+        budgets = e_dashboard.getBudgets(session["user_id"])
 
         # Get weekly spending for the user
-        weeks = tendie_dashboard.getLastFourWeekNames()
-        spending_week = tendie_dashboard.getWeeklySpending(
+        weeks = e_dashboard.getLastFourWeekNames()
+        spending_week = e_dashboard.getWeeklySpending(
             weeks, session["user_id"])
 
         # Get monthly spending for the user (for the current year)
-        spending_month = tendie_dashboard.getMonthlySpending(
+        spending_month = e_dashboard.getMonthlySpending(
             session["user_id"])
 
         # Get spending trends for the user
-        spending_trends = tendie_dashboard.getSpendingTrends(
+        spending_trends = e_dashboard.getSpendingTrends(
             session["user_id"])
 
         # Get payer spending for the user
         payersChart = tendie_reports.generatePayersReport(session["user_id"])
 
         return render_template("index.html", categories=categories, payers=payers, date=date, income=income, expenses_year=expenses_year, expenses_month=expenses_month, expenses_week=expenses_week, expenses_last5=expenses_last5,
-                               budgets=budgets, spending_week=spending_week, spending_month=spending_month, spending_trends=spending_trends, payersChart=payersChart)
+                               budgets=budgets, spending_week=spending_week, spending_month=spending_month, spending_trends=spending_trends, payersChart=payersChart,Month_number=Month_number)
 
     # User reached route via POST
     else:
@@ -248,7 +255,7 @@ def index():
         formData.pop(0)
 
         # Add expenses to the DB for user
-        expenses = tendie_expenses.addExpenses(formData, session["user_id"])
+        expenses = e_expenses.addExpenses(formData, session["user_id"])
 
         # Redirect to results page and render a summary of the submitted expenses
         return render_template("expensed.html", results=expenses)
@@ -276,7 +283,7 @@ def addexpenses():
         formData.pop(0)
 
         # Add expenses to the DB for user
-        expenses = tendie_expenses.addExpenses(formData, session["user_id"])
+        expenses = e_expenses.addExpenses(formData, session["user_id"])
 
         # Redirect to results page and render a summary of the submitted expenses
         return render_template("expensed.html", results=expenses)
@@ -284,10 +291,10 @@ def addexpenses():
     # User reached route via GET
     else:
         # Get the users spend categories
-        categories = tendie_categories.getSpendCategories(session["user_id"])
+        categories = e_categories.getSpendCategories(session["user_id"])
 
         # Get the users payers
-        payers = tendie_account.getPayers(session["user_id"])
+        payers = e_account.getPayers(session["user_id"])
 
         # Render expense page
         date = datetime.today().strftime('%Y-%m-%d')
@@ -303,13 +310,13 @@ def expensehistory():
     # User reached route via GET
     if request.method == "GET":
         # Get all of the users expense history ordered by submission time
-        history = tendie_expenses.getHistory(session["user_id"])
+        history = e_expenses.getHistory(session["user_id"])
 
         # Get the users spend categories
-        categories = tendie_categories.getSpendCategories(session["user_id"])
+        categories = e_categories.getSpendCategories(session["user_id"])
 
         # Get the users payers (for modal)
-        payers = tendie_account.getPayers(session["user_id"])
+        payers = e_account.getPayers(session["user_id"])
 
         return render_template("expensehistory.html", history=history, categories=categories, payers=payers, isDeleteAlert=False)
 
@@ -327,7 +334,7 @@ def expensehistory():
             return apology("Doh! Spend Categories is drunk. Try again!")
 
         # Get the existing expense record ID from the DB and build a data structure to store old expense details
-        oldExpense = tendie_expenses.getExpense(
+        oldExpense = e_expenses.getExpense(
             request.form, session["user_id"])
 
         # Make sure an existing record was found otherwise render an error message
@@ -338,22 +345,22 @@ def expensehistory():
         if userHasSelected_deleteExpense == True:
 
             # Delete the old record from the DB
-            deleted = tendie_expenses.deleteExpense(
+            deleted = e_expenses.deleteExpense(
                 oldExpense, session["user_id"])
             if not deleted:
                 return apology("The expense was unable to be deleted")
 
             # Get the users expense history, spend categories, payers, and then render the history page w/ delete alert
-            history = tendie_expenses.getHistory(session["user_id"])
-            categories = tendie_categories.getSpendCategories(
+            history = e_expenses.getHistory(session["user_id"])
+            categories = e_categories.getSpendCategories(
                 session["user_id"])
-            payers = tendie_account.getPayers(session["user_id"])
+            payers = e_account.getPayers(session["user_id"])
             return render_template("expensehistory.html", history=history, categories=categories, payers=payers, isDeleteAlert=True)
 
         # Update the existing expense record
         else:
             # Update the old record with new details from the form
-            expensed = tendie_expenses.updateExpense(
+            expensed = e_expenses.updateExpense(
                 oldExpense, request.form, session["user_id"])
             if not expensed:
                 return apology("The expense was unable to be updated")
@@ -380,13 +387,13 @@ def budgets(year=None):
     # User reached route via GET
     if request.method == "GET":
         # Get the users income
-        income = tendie_account.getIncome(session["user_id"])
+        income = e_account.getIncome(session["user_id"])
 
         # Get the users current budgets
-        budgets = tendie_budgets.getBudgets(session["user_id"])
+        budgets = e_budgets.getBudgets(session["user_id"])
 
         # Get the users total budgeted amount
-        budgeted = tendie_budgets.getTotalBudgetedByYear(
+        budgeted = e_budgets.getTotalBudgetedByYear(
             session["user_id"], year)
 
         return render_template("budgets.html", income=income, budgets=budgets, year=year, budgeted=budgeted, deletedBudgetName=None)
@@ -397,15 +404,15 @@ def budgets(year=None):
         budgetName = request.form.get("delete").strip()
 
         # Delete the budget
-        deletedBudgetName = tendie_budgets.deleteBudget(
+        deletedBudgetName = e_budgets.deleteBudget(
             budgetName, session["user_id"])
 
         # Render the budgets page with a success message, otherwise throw an error/apology
         if deletedBudgetName:
             # Get the users income, current budgets, and sum their budgeted amount unless they don't have any budgets (same steps as a GET for this route)
-            income = tendie_account.getIncome(session["user_id"])
-            budgets = tendie_budgets.getBudgets(session["user_id"])
-            budgeted = tendie_budgets.getTotalBudgetedByYear(
+            income = e_account.getIncome(session["user_id"])
+            budgets = e_budgets.getBudgets(session["user_id"])
+            budgeted = e_budgets.getTotalBudgetedByYear(
                 session["user_id"], year)
 
             return render_template("budgets.html", income=income, budgets=budgets, year=year, budgeted=budgeted, deletedBudgetName=deletedBudgetName)
@@ -421,7 +428,7 @@ def createbudget():
     # User reached route via POST
     if request.method == "POST":
         # Make sure user has no more than 20 budgets (note: 20 is an arbitrary value)
-        budgets = tendie_budgets.getBudgets(session["user_id"])
+        budgets = e_budgets.getBudgets(session["user_id"])
         if budgets:
             budgetCount = 0
             for year in budgets:
@@ -436,14 +443,14 @@ def createbudget():
         formData.pop(0)
 
         # Generate data structure to hold budget info from form
-        budgetDict = tendie_budgets.generateBudgetFromForm(formData)
+        budgetDict = e_budgets.generateBudgetFromForm(formData)
 
         # Render error message if budget name or categories contained invalid data
         if "apology" in budgetDict:
             return apology(budgetDict["apology"])
         else:
             # Add budget to DB for user
-            budget = tendie_budgets.createBudget(
+            budget = e_budgets.createBudget(
                 budgetDict, session["user_id"])
             # Render error message if budget name is a duplicate of another budget the user has
             if "apology" in budget:
@@ -452,13 +459,13 @@ def createbudget():
                 return render_template("budgetcreated.html", results=budget)
     else:
         # Get the users income
-        income = tendie_account.getIncome(session["user_id"])
+        income = e_account.getIncome(session["user_id"])
 
         # Get the users total budgeted amount
-        budgeted = tendie_budgets.getTotalBudgetedByYear(session["user_id"])
+        budgeted = e_budgets.getTotalBudgetedByYear(session["user_id"])
 
         # Get the users spend categories
-        categories = tendie_categories.getSpendCategories(session["user_id"])
+        categories = e_categories.getSpendCategories(session["user_id"])
 
         return render_template("createbudget.html", income=income, budgeted=budgeted, categories=categories)
 
@@ -477,14 +484,14 @@ def updatebudget(urlvar_budgetname):
         formData.pop(0)
 
         # Generate data structure to hold budget info from form
-        budgetDict = tendie_budgets.generateBudgetFromForm(formData)
+        budgetDict = e_budgets.generateBudgetFromForm(formData)
 
         # Render error message if budget name or categories contained invalid data
         if "apology" in budgetDict:
             return apology(budgetDict["apology"])
         else:
             # Update budget in the DB for user
-            budget = tendie_budgets.updateBudget(
+            budget = e_budgets.updateBudget(
                 urlvar_budgetname, budgetDict, session["user_id"])
 
             # Render error message if budget name is a duplicate of another budget the user has
@@ -496,22 +503,22 @@ def updatebudget(urlvar_budgetname):
     # User reached route via GET
     else:
         # Get the budget details from the DB based on the budget name provided via URL. Throw an apology/error if budget can't be found.
-        budgetID = tendie_budgets.getBudgetID(
+        budgetID = e_budgets.getBudgetID(
             urlvar_budgetname, session["user_id"])
         if budgetID is None:
             return apology("'" + urlvar_budgetname + "' budget does not exist")
         else:
-            budget = tendie_budgets.getBudgetByID(budgetID, session["user_id"])
+            budget = e_budgets.getBudgetByID(budgetID, session["user_id"])
 
         # Get the users income
-        income = tendie_account.getIncome(session["user_id"])
+        income = e_account.getIncome(session["user_id"])
 
         # Get the users total budgeted amount
-        budgeted = tendie_budgets.getTotalBudgetedByYear(
+        budgeted = e_budgets.getTotalBudgetedByYear(
             session["user_id"], budget['year'])
 
         # Generate the full, updatable budget data structure (name, amount for budget w/ all categories and their budgeted amounts)
-        budget = tendie_budgets.getUpdatableBudget(budget, session["user_id"])
+        budget = e_budgets.getUpdatableBudget(budget, session["user_id"])
 
         # Render the budget update page
         return render_template("updatebudget.html", income=income, budgeted=budgeted, budget=budget)
@@ -553,34 +560,34 @@ def categories():
 
             # Make sure user has no more than 30 categories (note: 30 is an arbitrary value)
             categoryCount = len(
-                tendie_categories.getSpendCategories(session["user_id"]))
+                e_categories.getSpendCategories(session["user_id"]))
             if categoryCount >= 30:
                 return apology("You've reached the max amount of categories")
 
             # Check to see if the new name already exists in the database (None == does not exist)
-            categoryID = tendie_categories.getCategoryID(newCategoryName)
+            categoryID = e_categories.getCategoryID(newCategoryName)
 
             # Category exists in the database already
             if categoryID:
 
                 # Make sure the user isn't trying to add a category they already have by passing in the users ID now (None == does not exists)
-                existingID = tendie_categories.getCategoryID(
+                existingID = e_categories.getCategoryID(
                     newCategoryName, session["user_id"])
                 if (existingID):
                     return apology("You already have '" + newCategoryName + "' category")
                 # Add the category to the users account
                 else:
-                    tendie_categories.addCategory_User(
+                    e_categories.addCategory_User(
                         categoryID, session["user_id"])
 
             # Category does not exist in the DB already - create a new category and then add it to the users account
             else:
                 # Creates a new category in the DB
-                newCategoryID = tendie_categories.addCategory_DB(
+                newCategoryID = e_categories.addCategory_DB(
                     newCategoryName)
 
                 # Adds the category to the users account
-                tendie_categories.addCategory_User(
+                e_categories.addCategory_User(
                     newCategoryID, session["user_id"])
 
             # Set the alert message for user
@@ -594,40 +601,40 @@ def categories():
             newCategoryName = request.form.get("newname").strip()
 
             # Check to see if the *old* category actually exists in the database (None == does not exist)
-            oldCategoryID = tendie_categories.getCategoryID(oldCategoryName)
+            oldCategoryID = e_categories.getCategoryID(oldCategoryName)
 
             # Old category does not exists in the database, throw error
             if oldCategoryID is None:
                 return apology("The category you're trying to rename doesn't exist")
 
             # Check to see if the *new* name already exists in the database (None == does not exist)
-            newCategoryID = tendie_categories.getCategoryID(newCategoryName)
+            newCategoryID = e_categories.getCategoryID(newCategoryName)
 
             # Category exists in the database already
             if newCategoryID:
 
                 # Make sure the user isn't trying to rename to a category they already have by passing in the users ID now (None == does not exists)
-                existingID = tendie_categories.getCategoryID(
+                existingID = e_categories.getCategoryID(
                     newCategoryName, session["user_id"])
                 if existingID:
                     return apology("You already have '" + newCategoryName + "' category")
 
                 # Get the new category name from the DB (prevents string upper/lowercase inconsistencies that can result from using the users input from the form instead of the DB)
-                newCategoryNameFromDB = tendie_categories.getSpendCategoryName(
+                newCategoryNameFromDB = e_categories.getSpendCategoryName(
                     newCategoryID)
 
                 # Rename the category
-                tendie_categories.renameCategory(
+                e_categories.renameCategory(
                     oldCategoryID, newCategoryID, oldCategoryName, newCategoryNameFromDB, session["user_id"])
 
             # Category does not exist in the DB already - create a new category and then add it to the users account
             else:
                 # Creates a new category in the DB
-                newCategoryID = tendie_categories.addCategory_DB(
+                newCategoryID = e_categories.addCategory_DB(
                     newCategoryName)
 
                 # Rename the category
-                tendie_categories.renameCategory(
+                e_categories.renameCategory(
                     oldCategoryID, newCategoryID, oldCategoryName, newCategoryName, session["user_id"])
 
             # Set the alert message for user
@@ -640,7 +647,7 @@ def categories():
             deleteName = request.form.get("delete").strip()
 
             # Check to see if the category actually exists in the database (None == does not exist)
-            categoryID = tendie_categories.getCategoryID(deleteName)
+            categoryID = e_categories.getCategoryID(deleteName)
 
             # Category does not exists in the database, throw error
             if categoryID is None:
@@ -648,32 +655,32 @@ def categories():
 
             # Make sure user has at least 1 category (do not allow 0 categories)
             categoryCount = len(
-                tendie_categories.getSpendCategories(session["user_id"]))
+                e_categories.getSpendCategories(session["user_id"]))
             if categoryCount <= 1:
                 return apology("You need to keep at least 1 spend category")
 
             # Delete the category
-            tendie_categories.deleteCategory(categoryID, session["user_id"])
+            e_categories.deleteCategory(categoryID, session["user_id"])
 
             # Set the alert message for user
             alert_deleteCategory = deleteName
 
         # Get the users spend categories
-        categories = tendie_categories.getSpendCategories(session["user_id"])
+        categories = e_categories.getSpendCategories(session["user_id"])
 
         return render_template("categories.html", categories=categories, newCategory=alert_newCategory, renamedCategory=alert_renameCategory, deleteCategory=alert_deleteCategory)
 
     # User reached route via GET
     else:
         # Get the users spend categories
-        categories = tendie_categories.getSpendCategories(session["user_id"])
+        categories = e_categories.getSpendCategories(session["user_id"])
 
         # Get the budgets associated with each spend category
-        categoryBudgets = tendie_categories.getBudgetsSpendCategories(
+        categoryBudgets = e_categories.getBudgetsSpendCategories(
             session["user_id"])
 
         # Generate a single data structure for storing all categories and their associated budgets
-        categoriesWithBudgets = tendie_categories.generateSpendCategoriesWithBudgets(
+        categoriesWithBudgets = e_categories.generateSpendCategoriesWithBudgets(
             categories, categoryBudgets)
 
         return render_template("categories.html", categories=categoriesWithBudgets, newCategory=None, renamedCategory=None, deleteCategory=None)
@@ -774,29 +781,36 @@ def payersreport(year=None):
     return render_template("payersreport.html", payers=payersReport, year=year)
 
 # Route to fetch notification preferences for a user
-@app.route("/notifications", methods=["GET", "POST"])
+@app.route("/analytics", methods=["GET", "POST"])
 @login_required  # Assuming you have a login_required decorator for route protection
 def get_notification_preferences():
         """FOR ANALYTICS"""
         if request.method == 'GET':
-            user = tendie_account.getAllUserInfo(session["user_id"])
             id = session["user_id"]
             #monthyear = tendie_account.getUserdate(session["user_id"])
             monthyear = request.args.get("month")
             savings_goal_percentage = float(request.args.get('goal',2)) 
 
-            income = tendie_account.getIncome(session["user_id"])
+            income = e_account.getIncome(session["user_id"])
 
             #defined_value = [{"percent": 5}, {"percent": 10},{"percent": 15}, {"percent": 20},{"percent": 25}, {"percent": 30}] 
 
             savings_target = ( savings_goal_percentage / 100) * income
 
-            monthlist = tendie_notifc.getSpenddateyear(session["user_id"])   
-
-            expenses = db.execute("with cte as(select user_id,category,amount, to_char(expensedate::date, 'YYYY-MM') as monthyear from public.expenses where user_id = :idd )select * from cte where monthyear = :month order by monthyear desc",
+            monthlist = e_analytics.getSpenddateyear(session["user_id"])   
+            saved_amount = db.execute("select  (u.income - COALESCE(sum(amount),0)) ::int as saved_amount from public.users u , public.expenses  e where e.user_id = u.id and user_id = :idd and to_char(expensedate::date, 'YYYY-MM') = :month and category not in ('Investment') group by u.income",
+                                     {"month": monthyear,"idd": id} ).fetchone()
+            if saved_amount is not None:
+                saved_amount = saved_amount[0]
+            else:
+                saved_amount = 0
+            
+            expenses = db.execute("select user_id,category,amount, to_char(expensedate::date, 'YYYY-MM') as monthyear from public.expenses where user_id = :idd and  to_char(expensedate::date, 'YYYY-MM') = :month order by monthyear desc",
                                 {"month": monthyear,"idd": id}).fetchall()
 
             total_expenses = sum(expense.amount for expense in expenses)
+
+            monthly_expenditure = income - saved_amount
 
             # Analyze spending patterns and identify categories where the user spends the most money
             category_expenses = {}
@@ -807,24 +821,39 @@ def get_notification_preferences():
             # Sort categories by total expenses
             sorted_categories = sorted(category_expenses.items(), key=lambda x: x[1], reverse=True)
 
-            savings_gap = savings_target - total_expenses
             recommendations = []
-            if total_expenses >= savings_target:
+            counter = []
+            if saved_amount >= savings_target:
                 recommendations.append("Congratulations! You have reached your savings target.")
+                counter.append(1)
             else:
-                recommendations.append(f"You need to save ${savings_target - total_expenses:.2f} more to reach your target.")
+                recommendations.append(f"You need to save Rs {savings_target - saved_amount:.2f} more to reach your target.")
+                counter.append(0)
 
             # Rule-based additional savings strategies
-            if total_expenses > (income * 0.6):
+            if monthly_expenditure > (income * 0.7):
                 recommendations.append("Consider reducing discretionary spending.")
-            elif total_expenses > (income * 0.5):
+                counter.append(1)
+            elif monthly_expenditure > (income * 0.6):
                 recommendations.append("Optimize recurring expenses to save more.")
+                counter.append(2)
             else:
                 recommendations.append("Keep up the good work on managing your expenses.")
+                counter.append(0)
+
+            if saved_amount > (income * 0.22):
+                recommendations.append("Congratulations! Your monthly holdings goal is achieved")
+                counter.append(1)
+            else:
+                recommendations.append(f"You need to invest or save Rs {income * 0.22:.2f} to reach your target.")
+                counter.append(0)
+
+            first = recommendations
+            count1 = counter
             
-            return render_template("notification.html",username=user["name"], recommend = recommendations,sortcat =sorted_categories,savgap= savings_gap,
-                                savings_target=savings_target,total_expenses=total_expenses,monthlist=monthlist,svgope=savings_goal_percentage
-                                )
+            return render_template("notification.html",sortcat =sorted_categories,saved_amount = saved_amount,
+                                savings_target=savings_target,total_expenses=total_expenses,monthlist=monthlist,svgope=savings_goal_percentage,
+                                first = first,count1 = count1)
 
         elif request.method =='POST':
             pass
@@ -875,7 +904,7 @@ def updateaccount():
             newIncome = float(request.form.get("income").strip())
 
             # Update the users income
-            updatedIncome = tendie_account.updateIncome(
+            updatedIncome = e_account.updateIncome(
                 newIncome, session["user_id"])
 
             # Render error message if the users income record could not be updated
@@ -892,7 +921,7 @@ def updateaccount():
             newName = request.form.get("payerName").strip()
 
             # Add the payer
-            newPayer = tendie_account.addPayer(newName, session["user_id"])
+            newPayer = e_account.addPayer(newName, session["user_id"])
 
             # Render error message if payer name is a duplicate of another payer the user has
             if newPayer != 1:
@@ -908,7 +937,7 @@ def updateaccount():
             newName = request.form.get("newpayer").strip()
 
             # Rename the payer
-            renamedPayer = tendie_account.renamePayer(
+            renamedPayer = e_account.renamePayer(
                 oldName, newName, session["user_id"])
 
             # Render error message if payer name is a duplicate of another payer the user has
@@ -924,7 +953,7 @@ def updateaccount():
             name = request.form.get("delete").strip()
 
             # Delete the payer
-            deletedPayer = tendie_account.deletePayer(name, session["user_id"])
+            deletedPayer = e_account.deletePayer(name, session["user_id"])
 
             # Render error message if the name could not be deleted
             if deletedPayer != 1:
@@ -936,7 +965,7 @@ def updateaccount():
         if userHasSelected_updatePassword:
 
             # Try updating the users password
-            updatedPassword = tendie_account.updatePassword(request.form.get(
+            updatedPassword = e_account.updatePassword(request.form.get(
                 "currentPassword"), request.form.get("newPassword"), session["user_id"])
 
             # Render error message if the password could not be updated
@@ -947,13 +976,13 @@ def updateaccount():
             alert_updatePassword = True
 
         # Get the users account name, income, payers, and stats
-        user = tendie_account.getAllUserInfo(session["user_id"])
+        user = e_account.getAllUserInfo(session["user_id"])
 
         return render_template("account.html", username=user["name"], income=user["income"], payers=user["payers"], stats=user["stats"], newIncome=alert_updateIncome, addPayer=alert_addPayer, renamedPayer=alert_renamePayer, deletedPayer=alert_deletePayer, updatedPassword=alert_updatePassword)
     else:
 
         # Get the users account name, income, payers, and stats
-        user = tendie_account.getAllUserInfo(session["user_id"])
+        user = e_account.getAllUserInfo(session["user_id"])
 
         return render_template("account.html", username=user["name"], income=user["income"], payers=user["payers"], stats=user["stats"], newIncome=None, addPayer=None, renamedPayer=None, deletedPayer=None, updatedPassword=None)
 

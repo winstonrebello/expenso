@@ -1,10 +1,10 @@
 import os
 import calendar
 import copy
-import tendie_expenses
-import tendie_dashboard
-import tendie_categories
-import tendie_budgets
+import e_expenses
+import e_dashboard
+import e_categories
+import e_budgets
 
 from flask import request, session
 from flask_session import Session
@@ -29,12 +29,12 @@ def generateBudgetsReport(userID, year=None):
         year = datetime.now().year
 
     # Get every budgets spent/remaining for the user
-    budgetsReport = tendie_dashboard.getBudgets(userID, year)
+    budgetsReport = e_dashboard.getBudgets(userID, year)
 
     # Loop through the budgets and add a new key/value pair to hold expense details per budget
     if budgetsReport:
         for record in budgetsReport:
-            budgetID = tendie_budgets.getBudgetID(record["name"], userID)
+            budgetID = e_budgets.getBudgetID(record["name"], userID)
             results = db.execute("SELECT expenses.description, expenses.category, expenses.expenseDate, expenses.payer, expenses.amount FROM expenses WHERE user_id = :usersID AND date_part('year', date(expensedate)) = :year AND category IN (SELECT categories.name FROM budgetcategories INNER JOIN categories on budgetcategories.category_id = categories.id WHERE budgetcategories.budgets_id = :budgetID)",
                                  {"usersID": userID, "year": year, "budgetID": budgetID}).fetchall()
             expenseDetails = convertSQLToDict(results)
@@ -51,7 +51,7 @@ def generateMonthlyReport(userID, year=None):
         year = datetime.now().year
 
     # Create data structure to hold users monthly spending data for the chart (monthly summed data)
-    spending_month_chart = tendie_dashboard.getMonthlySpending(userID, year)
+    spending_month_chart = e_dashboard.getMonthlySpending(userID, year)
 
     # Get the spending data from DB for the table (individual expenses per month)
     results = db.execute(
@@ -73,7 +73,7 @@ def generateSpendingTrendsReport(userID, year=None):
         year = datetime.now().year
 
     # Get chart data for spending trends
-    spending_trends_chart = tendie_dashboard.getSpendingTrends(userID, year)
+    spending_trends_chart = e_dashboard.getSpendingTrends(userID, year)
 
     # Data structure for spending trends table
     categories = []
@@ -95,10 +95,10 @@ def generateSpendingTrendsReport(userID, year=None):
     }
 
     # Get all of the users categories first (doesn't include old categories the user deleted but are still tracked in Expenses)
-    categories_active = tendie_categories.getSpendCategories(userID)
+    categories_active = e_categories.getSpendCategories(userID)
 
     # Get any categories that are in expenses but no longer exist as a selectable category for the user (because they deleted the category)
-    categories_inactive = tendie_categories.getSpendCategories_Inactive(userID)
+    categories_inactive = e_categories.getSpendCategories_Inactive(userID)
 
     # First fill using the users current categories, and then inactive categories from Expenses
     for activeCategory in categories_active:
